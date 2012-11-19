@@ -12,6 +12,12 @@ public class Foo extends Model {
     private String name;
     private String category;
 
+    public Foo() {}
+
+    public Foo(String name, String category) {
+        this.name = name;
+        this.category = category;
+    }
 
     public String getName() {
         return name;

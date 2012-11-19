@@ -9,4 +9,6 @@ GET     /                           controllers.Application.index()
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # Home page
-GET     /foo                        controllers.Application.index()
+POST    /addFoo/:name               controllers.Application.addFoo(name)
+GET     /addFoos                     controllers.Application.addFoos()
+GET     /listFoos                    controllers.Application.listFoos()
