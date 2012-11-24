@@ -1,4 +1,1 @@
-This is your new Play 2.0 application
-=====================================
-
-This file will be packaged with your application, when using `play dist`.
+This is a simple web application made for learning purposes, using Java, Scala, the Play framework, EBean ORM, and Heroku.
