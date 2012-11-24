@@ -16,15 +16,12 @@ public class Ingredient extends Model {
     @Constraints.Required
     public String name;
     public Double density;
-    @ManyToOne
+    public boolean isTempItem;
+    @ManyToOne(fetch = FetchType.LAZY)
     public IngredientCategory ingredientCategory;
     @OneToMany(cascade = CascadeType.ALL)
     public List<IngredientAlias> aliases;
     @ManyToMany
     public List<Recipe> recipes;
-
-    public Ingredient findIngredient(String name) {
-        return find.fetch("ingredientCategory").where().eq("name", name).findUnique();
-    }
 
 }

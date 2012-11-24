@@ -6,6 +6,7 @@ import play.db.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,6 @@ public class ShoppingList extends Model {
     public String title;
     @Formats.DateTime(pattern="yyyy-MM-dd")
     public Date createdDate;
-    public List<Ingredient> ingredients;
+    public List<Ingredient> ingredients = new ArrayList<>();
 
 }

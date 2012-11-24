@@ -1,6 +1,7 @@
 package models;
 
 import org.junit.Test;
+import services.IngredientService;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -26,7 +27,7 @@ public class IngredientTest extends BaseModelTest<Ingredient> {
         alias.ingredient = ingredient;
         alias.save();
 
-        Ingredient foundIngredient = Ingredient.find.fetch("ingredientCategory").where().eq("name", ingredientName).findUnique();
+        Ingredient foundIngredient = IngredientService.findIngredient(ingredientName);
         assertThat(foundIngredient.name).matches(ingredientName);
         assertThat(foundIngredient.ingredientCategory.name).matches(categoryName);
         assertThat(foundIngredient.aliases.size()).isEqualTo(1);

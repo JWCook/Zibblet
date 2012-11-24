@@ -7,6 +7,7 @@ create table ingredient (
   id                        bigint not null,
   name                      varchar(255),
   density                   double,
+  is_temp_item              boolean,
   ingredient_category_id    bigint,
   constraint pk_ingredient primary key (id))
 ;
@@ -22,6 +23,14 @@ create table ingredient_category (
   id                        bigint not null,
   name                      varchar(255),
   constraint pk_ingredient_category primary key (id))
+;
+
+create table item_quantity (
+  id                        bigint not null,
+  quantity                  integer,
+  unit_id                   bigint,
+  ingredient_id             bigint,
+  constraint pk_item_quantity primary key (id))
 ;
 
 create table recipe (
@@ -49,6 +58,16 @@ create table shopping_list (
   constraint pk_shopping_list primary key (id))
 ;
 
+create table unit (
+  id                        bigint not null,
+  name                      varchar(255),
+  symbol                    varchar(10),
+  conversion_ratio          double,
+  system                    varchar(6),
+  type                      varchar(255),
+  constraint pk_unit primary key (id))
+;
+
 
 create table ingredient_recipe (
   ingredient_id                  bigint not null,
@@ -67,16 +86,24 @@ create sequence ingredient_alias_seq;
 
 create sequence ingredient_category_seq;
 
+create sequence item_quantity_seq;
+
 create sequence recipe_seq;
 
 create sequence recipe_tag_seq;
 
 create sequence shopping_list_seq;
 
+create sequence unit_seq;
+
 alter table ingredient add constraint fk_ingredient_ingredientCatego_1 foreign key (ingredient_category_id) references ingredient_category (id) on delete restrict on update restrict;
 create index ix_ingredient_ingredientCatego_1 on ingredient (ingredient_category_id);
 alter table ingredient_alias add constraint fk_ingredient_alias_ingredient_2 foreign key (ingredient_id) references ingredient (id) on delete restrict on update restrict;
 create index ix_ingredient_alias_ingredient_2 on ingredient_alias (ingredient_id);
+alter table item_quantity add constraint fk_item_quantity_unit_3 foreign key (unit_id) references unit (id) on delete restrict on update restrict;
+create index ix_item_quantity_unit_3 on item_quantity (unit_id);
+alter table item_quantity add constraint fk_item_quantity_ingredient_4 foreign key (ingredient_id) references ingredient (id) on delete restrict on update restrict;
+create index ix_item_quantity_ingredient_4 on item_quantity (ingredient_id);
 
 
 
@@ -100,6 +127,8 @@ drop table if exists ingredient_alias;
 
 drop table if exists ingredient_category;
 
+drop table if exists item_quantity;
+
 drop table if exists recipe;
 
 drop table if exists recipe_tag_recipe;
@@ -107,6 +136,8 @@ drop table if exists recipe_tag_recipe;
 drop table if exists recipe_tag;
 
 drop table if exists shopping_list;
+
+drop table if exists unit;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 
@@ -116,9 +147,13 @@ drop sequence if exists ingredient_alias_seq;
 
 drop sequence if exists ingredient_category_seq;
 
+drop sequence if exists item_quantity_seq;
+
 drop sequence if exists recipe_seq;
 
 drop sequence if exists recipe_tag_seq;
 
 drop sequence if exists shopping_list_seq;
+
+drop sequence if exists unit_seq;
 

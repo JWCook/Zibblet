@@ -8,6 +8,7 @@ import play.db.ebean.Model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,13 +24,13 @@ public class Recipe extends Model {
     public String prepTime;
     @Length(max=16)
     public String cookTime;
-    @Length(min=0, max=64000)
+    @Length(max=64000)
     public String directions;
-    @Length(min=0, max=64000)
+    @Length(max=64000)
     public String notes;
     @ManyToMany(mappedBy = "recipes")
-    public List<Ingredient> ingredients;
+    public List<Ingredient> ingredients = new ArrayList<>();
     @ManyToMany(mappedBy = "recipes")
-    public List<RecipeTag> recipeTags;
+    public List<RecipeTag> recipeTags = new ArrayList<>();
 
 }

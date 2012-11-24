@@ -7,6 +7,7 @@ import play.db.ebean.Model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,6 +18,6 @@ public class RecipeTag extends Model {
     @Constraints.Required
     public String name;
     @ManyToMany
-    List<Recipe> recipes;
+    List<Recipe> recipes = new ArrayList<>();
 
 }

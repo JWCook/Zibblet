@@ -6,6 +6,7 @@ import play.db.ebean.Model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,6 +19,6 @@ public class IngredientCategory extends Model {
     @Constraints.Required
     public String name;
     @OneToMany
-    public List<Ingredient> ingredients;
+    public List<Ingredient> ingredients = new ArrayList<>();
 
 }
