@@ -27,7 +27,7 @@ create table ingredient_category (
 
 create table item_quantity (
   id                        bigint not null,
-  quantity                  integer,
+  quantity                  double,
   unit_id                   bigint,
   ingredient_id             bigint,
   constraint pk_item_quantity primary key (id))
@@ -63,8 +63,10 @@ create table unit (
   name                      varchar(255),
   symbol                    varchar(10),
   conversion_ratio          double,
-  system                    varchar(6),
-  type                      varchar(255),
+  system                    varchar(2),
+  type                      varchar(1),
+  constraint ck_unit_system check (system in ('US','SI')),
+  constraint ck_unit_type check (type in ('W','V')),
   constraint pk_unit primary key (id))
 ;
 

@@ -15,7 +15,7 @@ public class Ingredient extends Model {
     public Long id;
     @Constraints.Required
     public String name;
-    public Double density;
+    public double density;
     public boolean isTempItem;
     @ManyToOne(fetch = FetchType.LAZY)
     public IngredientCategory ingredientCategory;
@@ -24,4 +24,13 @@ public class Ingredient extends Model {
     @ManyToMany
     public List<Recipe> recipes;
 
+    public static Ingredient findIngredient(String name) {
+        return Ingredient.find.fetch("ingredientCategory")
+                .where().eq("name", name)
+                .where().eq("isTempItem", "false").findUnique();
+    }
+
+    public static List<Ingredient> findTempIngredients() {
+        return Ingredient.find.where().eq("isTempItem", "true").findList();
+    }
 }

@@ -1,7 +1,5 @@
 package models;
 
-import play.data.validation.Constraints;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -14,8 +12,7 @@ public class ItemQuantity {
 
     @Id
     public Long id;
-    @Constraints.Required
-    public Integer quantity;
+    public double quantity;
     @OneToOne
     public Unit unit;
     @OneToOne
