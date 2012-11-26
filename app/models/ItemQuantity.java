@@ -1,5 +1,8 @@
 package models;
 
+import com.avaje.ebean.validation.Length;
+import utility.unitconversion.CookingUnit;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -13,8 +16,10 @@ public class ItemQuantity {
     @Id
     public Long id;
     public double quantity;
-    @OneToOne
-    public Unit unit;
+    public String unitStr; // Non-standard unit, e.g., "1 can"
+    public String preparation; // Modifier for ingredient, e.g., "chopped," "diced," etc.
+    @Length(max=2)
+    public CookingUnit unit;
     @OneToOne
     public Ingredient ingredient;
 

@@ -28,8 +28,9 @@ create table ingredient_category (
 create table item_quantity (
   id                        bigint not null,
   quantity                  double,
-  unit_id                   bigint,
+  unit                      varchar(2),
   ingredient_id             bigint,
+  constraint ck_item_quantity_unit check (unit in ('c','l','kg','gl','tb','ts','qt','lb','g','ml','oz','pt','fl')),
   constraint pk_item_quantity primary key (id))
 ;
 
@@ -58,18 +59,6 @@ create table shopping_list (
   constraint pk_shopping_list primary key (id))
 ;
 
-create table unit (
-  id                        bigint not null,
-  name                      varchar(255),
-  symbol                    varchar(10),
-  conversion_ratio          double,
-  system                    varchar(2),
-  type                      varchar(1),
-  constraint ck_unit_system check (system in ('US','SI')),
-  constraint ck_unit_type check (type in ('W','V')),
-  constraint pk_unit primary key (id))
-;
-
 
 create table ingredient_recipe (
   ingredient_id                  bigint not null,
@@ -96,16 +85,12 @@ create sequence recipe_tag_seq;
 
 create sequence shopping_list_seq;
 
-create sequence unit_seq;
-
 alter table ingredient add constraint fk_ingredient_ingredientCatego_1 foreign key (ingredient_category_id) references ingredient_category (id) on delete restrict on update restrict;
 create index ix_ingredient_ingredientCatego_1 on ingredient (ingredient_category_id);
 alter table ingredient_alias add constraint fk_ingredient_alias_ingredient_2 foreign key (ingredient_id) references ingredient (id) on delete restrict on update restrict;
 create index ix_ingredient_alias_ingredient_2 on ingredient_alias (ingredient_id);
-alter table item_quantity add constraint fk_item_quantity_unit_3 foreign key (unit_id) references unit (id) on delete restrict on update restrict;
-create index ix_item_quantity_unit_3 on item_quantity (unit_id);
-alter table item_quantity add constraint fk_item_quantity_ingredient_4 foreign key (ingredient_id) references ingredient (id) on delete restrict on update restrict;
-create index ix_item_quantity_ingredient_4 on item_quantity (ingredient_id);
+alter table item_quantity add constraint fk_item_quantity_ingredient_3 foreign key (ingredient_id) references ingredient (id) on delete restrict on update restrict;
+create index ix_item_quantity_ingredient_3 on item_quantity (ingredient_id);
 
 
 
@@ -139,8 +124,6 @@ drop table if exists recipe_tag;
 
 drop table if exists shopping_list;
 
-drop table if exists unit;
-
 SET REFERENTIAL_INTEGRITY TRUE;
 
 drop sequence if exists ingredient_seq;
@@ -156,6 +139,4 @@ drop sequence if exists recipe_seq;
 drop sequence if exists recipe_tag_seq;
 
 drop sequence if exists shopping_list_seq;
-
-drop sequence if exists unit_seq;
 
