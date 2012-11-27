@@ -1,3 +1,5 @@
+package controllers;
+
 import org.junit.Test;
 import play.mvc.Result;
 

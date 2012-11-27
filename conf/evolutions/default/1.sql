@@ -28,6 +28,8 @@ create table ingredient_category (
 create table item_quantity (
   id                        bigint not null,
   quantity                  double,
+  unit_str                  varchar(255),
+  preparation               varchar(255),
   unit                      varchar(2),
   ingredient_id             bigint,
   constraint ck_item_quantity_unit check (unit in ('c','l','kg','gl','tb','ts','qt','lb','g','ml','oz','pt','fl')),

@@ -7,7 +7,7 @@ package utility.unitconversion;
  * 0/1/2/3/4/8
  */
 public enum CookingFraction {
-    ZERO            ("",    0.0000, 0.0625),
+    ZERO            ("0",    0.0000, 0.0625),
     ONE_EIGHTH      ("1/8", 0.0625, 0.1875),
     ONE_FOURTH      ("1/4", 0.1875, 0.2917),
     ONE_THIRD       ("1/3", 0.2917, 0.3542),

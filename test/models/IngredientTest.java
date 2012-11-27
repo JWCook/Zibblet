@@ -1,14 +1,13 @@
 package models;
 
 import org.junit.Test;
-import services.IngredientService;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class IngredientTest extends BaseModelTest<Ingredient> {
+public class IngredientTest extends BaseModelTest {
 
     @Test
-    public void testCreateAndReadIngredient() {
+    public void testCreateIngredient() {
         String categoryName = "category 1";
         String ingredientName = "ingredient 1";
         String aliasName = "ingredient 1a";
@@ -27,13 +26,13 @@ public class IngredientTest extends BaseModelTest<Ingredient> {
         alias.ingredient = ingredient;
         alias.save();
 
-        Ingredient foundIngredient = IngredientService.findIngredient(ingredientName);
+        Ingredient foundIngredient = Ingredient.find.fetch("ingredientCategory").where().eq("name", ingredientName).findUnique();
         assertThat(foundIngredient.name).matches(ingredientName);
         assertThat(foundIngredient.ingredientCategory.name).matches(categoryName);
         assertThat(foundIngredient.aliases.size()).isEqualTo(1);
         assertThat(foundIngredient.aliases.get(0).name).matches(aliasName);
         foundIngredient.delete();
-        assertThat(Ingredient.find.all().size() == 0);
+        assertThat(Ingredient.find.all().size()).isEqualTo(0);
     }
 
 }
