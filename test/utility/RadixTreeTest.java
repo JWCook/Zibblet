@@ -1,4 +1,4 @@
-/*
+package utility;/*
 The MIT License
 
 Copyright (c) 2008 Tahseen Ur Rehman, Javid Jamae
@@ -23,7 +23,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package utility;
 
 import org.junit.Before;
 import org.junit.Test;
