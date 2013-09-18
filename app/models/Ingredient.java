@@ -36,20 +36,26 @@ public class Ingredient extends Model {
 
     // TODO: join with aliases (separate query?)
     public static Ingredient findIngredient(String name) {
-        return Ingredient.find.fetch("category")
+        return find.fetch("category")
                 .where().eq("name", name)
                 .where().eq("isTempItem", "false")
                 .where().eq("isSubtype", "false").findUnique();
     }
 
     public static List<Ingredient> findIngredients() {
-        return Ingredient.find.fetch("category")
+        return find.fetch("category")
                 .where().eq("isTempItem", "false")
                 .where().eq("isSubtype", "false").findList();
     }
 
     public static List<Ingredient> findTempIngredients() {
-        return Ingredient.find.where().eq("isTempItem", "true").findList();
+        return find.where().eq("isTempItem", "true").findList();
+    }
+
+    public static Ingredient findSubtype(String name) {
+        return find.fetch("supertype")
+                .where().eq("name", name)
+                .where().eq("isSubtype", "true").findUnique();
     }
 
     public void addSubtype(Ingredient subType) {
