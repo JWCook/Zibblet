@@ -61,12 +61,17 @@ public class Ingredient extends Model {
         subType.save();
     }
 
+    public void saveAsTempIngredient() {
+        isTempItem = true;
+        save();
+    }
+
     /**
-     * Workaround for broken cascade deletion for One-To-Many self-relationships being in EBean ORM.
-     * TODO: Replace with cascade remove once EBean bug #420 is fixed
+     * Workaround for broken cascade deletion for One-To-Many self-relationships in EBean ORM.
+     * TODO: Replace with cascade delete once EBean bug #420 is fixed
      */
     @Transactional
-    public void deleteIngredient() {
+    public void deleteIngredientAndSubtypes() {
         if (!isSubtype) {
             for (Ingredient subtype : subtypes) {
                 subtype.delete();

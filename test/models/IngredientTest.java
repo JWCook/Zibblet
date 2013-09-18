@@ -39,8 +39,8 @@ public class IngredientTest extends BaseModelTest {
 
     @After
     public void unload() {
-        for (Ingredient ingredient : Ingredient.findIngredients()) {
-            ingredient.deleteIngredient();
+        for (Ingredient ingredient : Ingredient.find.where().eq("isSubtype", "false").findList()) {
+            ingredient.deleteIngredientAndSubtypes();
         }
         for (IngredientAlias alias : aliasFinder.all()) {
             alias.delete();
@@ -50,11 +50,34 @@ public class IngredientTest extends BaseModelTest {
         }
     }
 
+    /*
+     * General
+     */
+
     @Test
     public void testCreateIngredient() {
         Ingredient ingredient = Ingredient.find.where().eq("name", "ingredient 1").findUnique();
         assertThat(ingredient.name).isEqualTo("ingredient 1");
     }
+
+    @Test
+    public void testDeleteIngredient() {
+        Ingredient ingredient = Ingredient.find.where().eq("name", "ingredient 1").findUnique();
+        assertThat(ingredient).isNotNull();
+        ingredient.deleteIngredientAndSubtypes();
+        ingredient = ingredient.find.where().eq("name", "ingredient 1").findUnique();
+        assertThat(ingredient).isNull();
+    }
+
+    @Test
+    public void testFindIngredients() {
+        List<Ingredient> ingredients = Ingredient.findIngredients();
+        assertThat(ingredients).hasSize(1);
+    }
+
+    /*
+     * Aliases
+     */
 
     @Test
     public void testAddAlias() {
@@ -64,31 +87,8 @@ public class IngredientTest extends BaseModelTest {
     }
 
     @Test
-    public void testAddCategory() {
-        Ingredient ingredient = Ingredient.find.fetch("category").where().eq("name", "ingredient 1").findUnique();
-        assertThat(ingredient.category.name).matches("category 1");
-    }
-
-    @Test
-    public void testAddSubType() {
-        Ingredient ingredient = Ingredient.find.where().eq("name", "ingredient 1").findUnique();
-        List<Ingredient> subtypes = ingredient.subtypes;
-        assertThat(subtypes).isNotEmpty();
-        assertThat(subtypes.get(0).name).isEqualTo("ingredient 1, modified");
-    }
-
-    @Test
-    public void testDeleteIngredient() {
-        Ingredient ingredient = Ingredient.find.where().eq("name", "ingredient 1").findUnique();
-        assertThat(ingredient).isNotNull();
-        ingredient.deleteIngredient();
-        ingredient = ingredient.find.where().eq("name", "ingredient 1").findUnique();
-        assertThat(ingredient).isNull();
-    }
-
-    @Test
     public void testDeleteIngredientDeletesAlias() {
-        Ingredient.find.where().eq("name", "ingredient 1").findUnique().deleteIngredient();
+        Ingredient.find.where().eq("name", "ingredient 1").findUnique().deleteIngredientAndSubtypes();
         IngredientAlias alias = aliasFinder.where().eq("name", "ingredient 1a").findUnique();
         assertThat(alias).isNull();
     }
@@ -100,9 +100,87 @@ public class IngredientTest extends BaseModelTest {
         assertThat(ingredient).isNotNull();
     }
 
+    /*
+     * Subtypes
+     */
+
+    @Test
+    public void testAddSubtype() {
+        Ingredient ingredient = Ingredient.find.where().eq("name", "ingredient 1").findUnique();
+        List<Ingredient> subtypes = ingredient.subtypes;
+        assertThat(subtypes).isNotEmpty();
+        assertThat(subtypes.get(0).name).isEqualTo("ingredient 1, modified");
+    }
+
+    @Test
+    public void testGetSupertypeFromSubtypeLookup() {
+        Ingredient subtype = Ingredient.find.fetch("supertype").where().eq("name", "ingredient 1, modified").findUnique();
+        assertThat(subtype).isNotNull();
+
+        Ingredient supertype = subtype.supertype;
+        assertThat(supertype).isNotNull();
+        assertThat(supertype.name).isEqualTo("ingredient 1");
+    }
+
+    @Test
+    public void testGetSupertypeFromSubtypeMember() {
+        Ingredient ingredient = Ingredient.find.where().eq("name", "ingredient 1").findUnique();
+        List<Ingredient> subtypes = ingredient.subtypes;
+        Ingredient subtypeSupertype = subtypes.get(0).supertype;
+        assertThat(subtypeSupertype).isNotNull();
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void testAddSubtypeToSubtypeFails() {
+        Ingredient subtype = Ingredient.find.where().eq("name", "ingredient 1, modified").findUnique();
+        Ingredient subsubtype = new Ingredient();
+        subsubtype.name = "subtype of ingredient 1, modified";
+        subtype.addSubtype(subsubtype);
+    }
+
+    @Test
+    public void testAddSubtypeToSubtypeDoesNotPersist() {
+        Ingredient subtype = Ingredient.find.where().eq("name", "ingredient 1, modified").findUnique();
+        Ingredient subsubtype = new Ingredient();
+        subsubtype.name = "subtype of ingredient 1, modified";
+        try {
+            subtype.addSubtype(subsubtype);
+        } catch (UnsupportedOperationException e) {}
+
+        List<Ingredient> subsubtypes = subtype.subtypes;
+        assertThat(subsubtypes).isEmpty();
+        subsubtype = Ingredient.find.where().eq("name", "subtype of ingredient 1, modified").findUnique();
+        assertThat(subsubtype).isNull();
+    }
+
+    @Test
+    public void testDeleteIngredientDeletesSubtypes() {
+        Ingredient.find.where().eq("name", "ingredient 1").findUnique().deleteIngredientAndSubtypes();
+        Ingredient subtype = Ingredient.find.where().eq("name", "ingredient 1, modified").findUnique();
+        assertThat(subtype).isNull();
+    }
+
+
+    @Test
+    public void testDeleteSubtypeDoesNotDeleteIngredient() {
+        Ingredient.find.where().eq("name", "ingredient 1, modified").findUnique().deleteIngredientAndSubtypes();
+        Ingredient ingredient = Ingredient.find.where().eq("name", "ingredient 1").findUnique();
+        assertThat(ingredient).isNotNull();
+    }
+
+    /*
+     * Categories
+     */
+
+    @Test
+    public void testAddCategory() {
+        Ingredient ingredient = Ingredient.find.fetch("category").where().eq("name", "ingredient 1").findUnique();
+        assertThat(ingredient.category.name).matches("category 1");
+    }
+
     @Test
     public void testDeleteIngredientDoesNotDeleteCategory() {
-        Ingredient.find.where().eq("name", "ingredient 1").findUnique().deleteIngredient();
+        Ingredient.find.where().eq("name", "ingredient 1").findUnique().deleteIngredientAndSubtypes();
         IngredientCategory category = IngredientCategory.find.where().eq("name", "category 1").findUnique();
         assertThat(category).isNotNull();
     }
@@ -121,23 +199,41 @@ public class IngredientTest extends BaseModelTest {
         assertThat(ingredient.category.name).isEqualTo(IngredientCategory.UNCATEGORIZED);
     }
 
+    /*
+     * Temp Ingredients
+     */
+
     @Test
-    public void testDeleteIngredientDeletesSubtypes() {
-        Ingredient.find.where().eq("name", "ingredient 1").findUnique().deleteIngredient();
-        Ingredient subtype = Ingredient.find.where().eq("name", "ingredient 1, modified").findUnique();
-        assertThat(subtype).isNull();
+    public void testCreateTempIngredient() {
+        Ingredient tempIngredient = new Ingredient();
+        tempIngredient.name = "temp ingredient 1";
+        tempIngredient.saveAsTempIngredient();
+
+        Ingredient ingredient = Ingredient.find.where().eq("name", "temp ingredient 1").findUnique();
+        assertThat(ingredient.name).isEqualTo("temp ingredient 1");
     }
 
     @Test
-    public void testDeleteSubtypeDoesNotDeleteIngredient() {
-        Ingredient.find.where().eq("name", "ingredient 1, modified").findUnique().deleteIngredient();
-        Ingredient ingredient = Ingredient.find.where().eq("name", "ingredient 1").findUnique();
+    public void testDeleteTempIngredient() {
+        Ingredient tempIngredient = new Ingredient();
+        tempIngredient.name = "temp ingredient 1";
+        tempIngredient.saveAsTempIngredient();
+
+        Ingredient ingredient = Ingredient.find.where().eq("name", "temp ingredient 1").findUnique();
         assertThat(ingredient).isNotNull();
+        ingredient.deleteIngredientAndSubtypes();
+        ingredient = ingredient.find.where().eq("name", "temp ingredient 1").findUnique();
+        assertThat(ingredient).isNull();
     }
 
+    @Test
+    public void testListIngredientsExcludesTempIngredients() {
+        Ingredient tempIngredient = new Ingredient();
+        tempIngredient.name = "temp ingredient 1";
+        tempIngredient.saveAsTempIngredient();
 
-    // TODO: test temp items
-
-    // TODO: test categories
+        List<Ingredient> ingredients = Ingredient.findIngredients();
+        assertThat(ingredients).hasSize(1);
+    }
 
 }
