@@ -7,8 +7,9 @@ create table ingredient (
   id                        bigint not null,
   name                      varchar(255),
   density                   double,
-  is_temp_item              boolean,
   is_subtype                boolean,
+  is_temp_item              boolean,
+  is_usda_data              boolean,
   supertype_id              bigint,
   category_id               bigint,
   constraint pk_ingredient primary key (id))

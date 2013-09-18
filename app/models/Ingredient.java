@@ -22,8 +22,9 @@ public class Ingredient extends Model {
     @Constraints.Required
     public String name;
     public double density;
-    public boolean isTempItem;
     public boolean isSubtype;
+    public boolean isTempItem;
+    public boolean isUsdaData;
     @ManyToOne
     public Ingredient supertype;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "supertype")
@@ -61,7 +62,7 @@ public class Ingredient extends Model {
     }
 
     /**
-     * Workaround for broken cascade deletion for One-To_Many self-relationships being in EBean ORM.
+     * Workaround for broken cascade deletion for One-To-Many self-relationships being in EBean ORM.
      * TODO: Replace with cascade remove once EBean bug #420 is fixed
      */
     @Transactional
